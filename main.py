@@ -1,5 +1,7 @@
 from openai import OpenAI
+import openai
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 
 load_dotenv()
@@ -28,11 +30,20 @@ response = client.chat.completions.create(
       ]
     }
   ],
-  temperature=0,
+  temperature=1,
   max_tokens=1800,
   response_format={
     "type": "text"
   }
 )
 
-print(response.choices[0].message.content)
+haiku = response.choices[0].message.content
+print(haiku)
+
+speech_file_path = "haiku.mp3"
+response = openai.audio.speech.create(
+  model="tts-1",
+  voice="alloy",
+  input=haiku
+)
+response.stream_to_file(speech_file_path)
